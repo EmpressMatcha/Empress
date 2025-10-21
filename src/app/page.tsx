@@ -6,7 +6,9 @@ import { ShoppingCart, User } from "lucide-react";
 export default function Home() {
   const carouselRef = useRef<HTMLDivElement | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
 
+  // ===== AUTO SCROLL FOR IMAGE CAROUSEL =====
   useEffect(() => {
     const carousel = carouselRef.current;
     if (!carousel) return;
@@ -29,6 +31,7 @@ export default function Home() {
     return () => cancelAnimationFrame(frame);
   }, []);
 
+  // ===== SLIDE DATA =====
   const slides = [
     {
       tag: "* ROYAL MATCHA *",
@@ -36,7 +39,7 @@ export default function Home() {
       description: "Ceremonial matcha for everyday rituals.",
       button: "SHOP MATCHA",
       image: "/slides/image2.png",
-      bg: "#F5F2EB", // soft beige
+      bg: "#FAEBDD",
     },
     {
       tag: "* LIMITED EDITION *",
@@ -44,7 +47,7 @@ export default function Home() {
       description: "Carry calm everywhere you go.",
       button: "SHOP TOTE",
       image: "/slides/image.png",
-      bg: "#E8F0E3", // soft green
+      bg: "#FAEBDD",
     },
     {
       tag: "* ELEVATE YOUR MATCHA *",
@@ -52,15 +55,32 @@ export default function Home() {
       description: "A ritual, redefined.",
       button: "SHOP SET",
       image: "/slides/image4.png",
-      bg: "#F5F2EB", // soft beige
+      bg: "#FAEBDD",
     },
   ];
 
-  const handlePrev = () =>
-    setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
-  const handleNext = () =>
-    setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+  // ===== SLIDE CONTROL =====
+  const switchSlide = (nextIndex: number) => {
+    setIsAnimating(true);
+    setTimeout(() => {
+      setCurrentSlide(nextIndex);
+      setIsAnimating(false);
+    }, 350);
+  };
 
+  const handleNext = () =>
+    switchSlide((currentSlide + 1) % slides.length);
+
+  const handlePrev = () =>
+    switchSlide(currentSlide === 0 ? slides.length - 1 : currentSlide - 1);
+
+  // ===== AUTO ROTATION =====
+  useEffect(() => {
+    const interval = setInterval(handleNext, 6000);
+    return () => clearInterval(interval);
+  }, [currentSlide]);
+
+  // ===== CAROUSEL IMAGES =====
   const images = [
     "/carousel/image3.png",
     "/carousel/image4.png",
@@ -76,7 +96,7 @@ export default function Home() {
 
   return (
     <main className="relative w-full overflow-hidden text-white">
-      {/* ====== HERO SECTION ====== */}
+      {/* ===== HERO SECTION ===== */}
       <section className="relative h-screen w-full overflow-hidden">
         <video
           className="absolute top-0 left-0 w-full h-full object-cover"
@@ -93,14 +113,20 @@ export default function Home() {
             <a href="#" className="hover:opacity-80 transition">Recipes</a>
             <a href="#" className="hover:opacity-80 transition">About</a>
             <a href="#" className="hover:opacity-80 transition">Blog</a>
-            <div className="flex items-center space-x-4 ml-4">
-              <User className="w-5 h-5" />
-              <div className="flex items-center bg-white text-black rounded-full px-4 py-1 text-sm font-semibold">
+            <div className="flex items-center space-x-3 ml-4">
+              {/* Profile Icon Button */}
+              <button className="bg-white text-black rounded-full p-2 shadow-[2px_3px_0_#000] hover:translate-y-[2px] hover:shadow-none transition-all">
+                <User className="w-4 h-4" />
+              </button>
+
+              {/* Cart Button */}
+              <button className="flex items-center bg-white text-black rounded-full px-4 py-2 shadow-[2px_3px_0_#000] hover:translate-y-[2px] hover:shadow-none transition-all">
                 <ShoppingCart className="w-4 h-4 mr-2" /> Cart [0]
-              </div>
+              </button>
             </div>
           </div>
         </nav>
+
         <div className="absolute bottom-20 left-10 z-20">
           <h1 className="text-5xl md:text-6xl font-serif mb-8 drop-shadow-lg">
             Be Royal. Drink Empress Matcha.
@@ -112,12 +138,16 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/30 z-10"></div>
       </section>
 
-      {/* ====== SLIDES SECTION ====== */}
+      {/* ===== SLIDES SECTION ===== */}
       <section
-        className="w-full flex flex-col md:flex-row items-center justify-between px-10 md:px-24 py-20 text-black transition-all duration-700"
+        className="w-full flex flex-col md:flex-row items-center justify-between px-10 md:px-24 py-20 text-black transition-all duration-700 ease-in-out"
         style={{ backgroundColor: slides[currentSlide].bg }}
       >
-        <div className="md:w-1/2 flex flex-col items-center justify-center space-y-8 text-center md:text-left transition-all duration-700">
+        <div
+          className={`md:w-1/2 flex flex-col items-center justify-center space-y-8 text-center md:text-left transform transition-all duration-700 ease-in-out ${
+            isAnimating ? "opacity-70 translate-x-2" : "opacity-100 translate-x-0"
+          }`}
+        >
           <p className="text-sm font-mono tracking-widest">{slides[currentSlide].tag}</p>
           <h2 className="text-6xl font-serif">{slides[currentSlide].title}</h2>
           <p className="text-lg font-mono leading-relaxed">{slides[currentSlide].description}</p>
@@ -125,7 +155,7 @@ export default function Home() {
             {slides[currentSlide].button}
           </button>
 
-          {/* ARROWS (SQUARE NOW) */}
+          {/* ARROWS */}
           <div className="flex space-x-4 pt-6">
             <button
               onClick={handlePrev}
@@ -146,18 +176,22 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="md:w-1/2 mt-10 md:mt-0 flex justify-center transition-all duration-700">
+        <div
+          className={`md:w-1/2 mt-10 md:mt-0 flex justify-center transform transition-all duration-700 ease-in-out ${
+            isAnimating ? "opacity-70 scale-95 translate-y-2" : "opacity-100 scale-100 translate-y-0"
+          }`}
+        >
           <Image
             src={slides[currentSlide].image}
             alt={slides[currentSlide].title}
             width={500}
             height={500}
-            className="rounded-3xl w-[90%] max-w-lg aspect-square object-cover shadow-lg transition-all duration-700"
+            className="rounded-3xl w-[90%] max-w-lg aspect-square object-cover shadow-lg"
           />
         </div>
       </section>
 
-      {/* ====== IMAGE CAROUSEL ====== */}
+      {/* ===== IMAGE CAROUSEL ===== */}
       <section className="w-full bg-[#FAEBDD] py-16 px-6 md:px-12 text-[#1E1E1E]">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <h3 className="text-2xl md:text-3xl font-serif mb-4 md:mb-0">See What We’re Whisking Up</h3>
@@ -203,8 +237,8 @@ export default function Home() {
         <div className="border-t border-dotted border-[#333] mt-20 opacity-40"></div>
       </section>
 
-      {/* ====== FOOTER ====== */}
-      <footer className="w-full bg-white text-black py-6 flex flex-col md:flex-row items-center justify-between px-8 text-sm font-mono border-t border-[#ccc]">
+      {/* ===== FOOTER ===== */}
+      <footer className="w-full bg-[#FAEBDD] text-black py-6 flex flex-col md:flex-row items-center justify-between px-8 text-sm font-mono border-t border-[#ccc]">
         <p className="mb-3 md:mb-0">&copy; {new Date().getFullYear()} Empress Matcha</p>
         <div className="flex space-x-6">
           <a href="#" className="hover:opacity-80 transition">Privacy Policy</a>
