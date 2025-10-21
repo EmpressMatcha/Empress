@@ -125,11 +125,11 @@ export default function Home() {
             {slides[currentSlide].button}
           </button>
 
-          {/* ARROWS */}
+          {/* ARROWS (SQUARE NOW) */}
           <div className="flex space-x-4 pt-6">
             <button
               onClick={handlePrev}
-              className="bg-[#EFE6DD] border border-black rounded-full p-3 shadow-[2px_3px_0_#000] hover:translate-y-[2px] hover:shadow-none transition-all"
+              className="bg-[#EFE6DD] border border-black rounded p-3 shadow-[2px_3px_0_#000] hover:translate-y-[2px] hover:shadow-none transition-all"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -137,7 +137,7 @@ export default function Home() {
             </button>
             <button
               onClick={handleNext}
-              className="bg-[#EFE6DD] border border-black rounded-full p-3 shadow-[2px_3px_0_#000] hover:translate-y-[2px] hover:shadow-none transition-all"
+              className="bg-[#EFE6DD] border border-black rounded p-3 shadow-[2px_3px_0_#000] hover:translate-y-[2px] hover:shadow-none transition-all"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
